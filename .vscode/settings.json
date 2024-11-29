@@ -1,0 +1,19 @@
+{
+    "sqltools.connections": [
+        {
+            "pgOptions": {
+                "ssl": {
+                    "rejectUnauthorized": true
+                }
+            },
+            "previewLimit": 50,
+            "server": "dpg-ct4s6k08fa8c73bqursg-a.oregon-postgres.render.com",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "midterm",
+            "database": "midterm_postgresql_merisir",
+            "username": "midterm_postgresql_merisir_user",
+            "password": "K7D01WmZIP4Z0u3hNuYOPKQ3X4MeSMqm"
+        }
+    ]
+}
