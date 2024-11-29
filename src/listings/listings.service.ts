@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { BookingsService } from '../bookings/bookings.service'; // Correct relative path
+import { BookingsService } from '../bookings/bookings.service'; 
 
 @Injectable()
 export class ListingsService {
-  private listings: any[] = []; // In-memory storage for listings
+  private listings: any[] = [];
 
   constructor(private readonly bookingsService: BookingsService) {}
 
   insertListing(body: { noOfPeople: number; country: string; city: string; price: number }) {
     const listing = {
-      id: this.listings.length + 1, // Simple ID generation
+      id: this.listings.length + 1,
       ...body,
     };
-    this.listings.push(listing); // Store the listing in memory
+    this.listings.push(listing);
 
     return { status: 'Successful', data: listing };
   }
@@ -37,15 +37,14 @@ export class ListingsService {
       return isMatchingLocationAndPeople && isNotBookedDuringRequestedDates;
     });
   
-    // Pagination: Calculate the starting index and slice the array
     const startIndex = (query.page - 1) * query.limit;
     const paginatedListings = filteredListings.slice(startIndex, startIndex + query.limit);
   
     return {
       status: 'Successful',
       listings: paginatedListings,
-      totalListings: filteredListings.length,  // Include total number of listings for pagination info
-      totalPages: Math.ceil(filteredListings.length / query.limit), // Calculate total pages
+      totalListings: filteredListings.length,
+      totalPages: Math.ceil(filteredListings.length / query.limit),
       currentPage: query.page,
     };
   }
@@ -75,21 +74,19 @@ export class ListingsService {
         averageRating: this.getAverageRatingForListing(listing.id),
       }));
   
-    // Pagination: Calculate the starting index and slice the array
     const startIndex = (query.page - 1) * query.limit;
     const paginatedListings = filteredListings.slice(startIndex, startIndex + query.limit);
   
     return {
       status: 'Successful',
       listings: paginatedListings,
-      totalListings: filteredListings.length,  // Include total number of listings for pagination info
-      totalPages: Math.ceil(filteredListings.length / query.limit), // Calculate total pages
+      totalListings: filteredListings.length,
+      totalPages: Math.ceil(filteredListings.length / query.limit),
       currentPage: query.page,
     };
   }
 
   private isListingAvailableForBooking(listingId: number, dateFrom: string, dateTo: string): boolean {
-    // Get all bookings for the listing with `listingId` and check if the dates overlap
     const bookings = this.bookingsService.getBookingsForListing(listingId);
 
     for (const booking of bookings) {
@@ -99,11 +96,11 @@ export class ListingsService {
         (new Date(dateFrom) <= new Date(booking.dateFrom) && new Date(dateTo) >= new Date(booking.dateTo));
 
       if (isDateConflict) {
-        return false; // The listing is already booked for the requested period
+        return false;
       }
     }
 
-    return true; // No conflict, listing is available
+    return true;
   }
 
   private getAverageRatingForListing(listingId: number): number {

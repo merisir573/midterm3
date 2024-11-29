@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class BookingsService {
-  private bookings: any[] = []; // In-memory storage for bookings
-  private reviews: any[] = []; // In-memory storage for reviews
+  private bookings: any[] = [];
+  private reviews: any[] = []; 
 
   bookStay(body: { listingId: number; namesOfPeople: string[]; dateFrom: string; dateTo: string }) {
     const booking = {
@@ -13,13 +13,12 @@ export class BookingsService {
       dateFrom: body.dateFrom,
       dateTo: body.dateTo,
     };
-    this.bookings.push(booking); // Store the booking in memory
+    this.bookings.push(booking);
 
     return { status: 'Successful', data: booking };
   }
 
   getBookingsForListing(listingId: number) {
-    // Return all bookings that belong to the given listingId
     return this.bookings.filter((booking) => booking.listingId === listingId);
   }
 
@@ -36,13 +35,12 @@ export class BookingsService {
       comment: body.comment,
     };
 
-    this.reviews.push(review); // Store the review in memory
+    this.reviews.push(review);
 
     return { status: 'Successful', data: review };
   }
 
   getReviewsForListing(listingId: number) {
-    // Return all reviews for the given listingId
     return this.reviews.filter((review) => review.listingId === listingId);
   }
 }
