@@ -17,30 +17,49 @@ export class ListingsService {
     return { status: 'Successful', data: listing };
   }
 
-  queryListings(query: { country: string; city: string; noOfPeople: number; dateFrom: string; dateTo: string }) {
+  queryListings(query: { 
+    country: string; 
+    city: string; 
+    noOfPeople: number; 
+    dateFrom: string; 
+    dateTo: string;
+    page: number; 
+    limit: number;
+  }) {
     const filteredListings = this.listings.filter((listing) => {
-      // Filter listings by country, city, and noOfPeople
       const isMatchingLocationAndPeople =
         (listing.country === query.country || !query.country) &&
         (listing.city === query.city || !query.city) &&
         (listing.noOfPeople <= query.noOfPeople || !query.noOfPeople);
-
-      // Now we also need to check if the listing is available within the given date range
+  
       const isNotBookedDuringRequestedDates = this.isListingAvailableForBooking(listing.id, query.dateFrom, query.dateTo);
-
+  
       return isMatchingLocationAndPeople && isNotBookedDuringRequestedDates;
     });
-
+  
+    // Pagination: Calculate the starting index and slice the array
+    const startIndex = (query.page - 1) * query.limit;
+    const paginatedListings = filteredListings.slice(startIndex, startIndex + query.limit);
+  
     return {
       status: 'Successful',
-      listings: filteredListings,
+      listings: paginatedListings,
+      totalListings: filteredListings.length,  // Include total number of listings for pagination info
+      totalPages: Math.ceil(filteredListings.length / query.limit), // Calculate total pages
+      currentPage: query.page,
     };
   }
+  
 
-  queryListingsByRating(query: { country: string; city?: string; rating: number }) {
+  queryListingsByRating(query: { 
+    country: string; 
+    city?: string; 
+    rating: number;
+    page: number; 
+    limit: number;
+  }) {
     const { country, city, rating } = query;
   
-    // Filter listings that match the location and have an average rating >= specified rating
     const filteredListings = this.listings
       .filter((listing) => {
         const matchesLocation =
@@ -56,8 +75,19 @@ export class ListingsService {
         averageRating: this.getAverageRatingForListing(listing.id),
       }));
   
-    return { status: 'Successful', listings: filteredListings };
+    // Pagination: Calculate the starting index and slice the array
+    const startIndex = (query.page - 1) * query.limit;
+    const paginatedListings = filteredListings.slice(startIndex, startIndex + query.limit);
+  
+    return {
+      status: 'Successful',
+      listings: paginatedListings,
+      totalListings: filteredListings.length,  // Include total number of listings for pagination info
+      totalPages: Math.ceil(filteredListings.length / query.limit), // Calculate total pages
+      currentPage: query.page,
+    };
   }
+
   private isListingAvailableForBooking(listingId: number, dateFrom: string, dateTo: string): boolean {
     // Get all bookings for the listing with `listingId` and check if the dates overlap
     const bookings = this.bookingsService.getBookingsForListing(listingId);

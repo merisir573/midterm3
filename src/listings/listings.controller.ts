@@ -29,7 +29,17 @@ export class ListingsController {
   @ApiQuery({ name: 'noOfPeople', type: 'number', required: false, description: 'Filter by number of people' })
   @ApiQuery({ name: 'dateFrom', type: 'string', required: false, description: 'Start date of availability', format: 'date' })
   @ApiQuery({ name: 'dateTo', type: 'string', required: false, description: 'End date of availability', format: 'date' })
-  queryListings(@Query() query: { country: string; city: string; noOfPeople: number; dateFrom: string; dateTo: string }) {
+  @ApiQuery({ name: 'page', type: 'number', required: false, description: 'Page number for pagination', default: 1 })
+  @ApiQuery({ name: 'limit', type: 'number', required: false, description: 'Number of listings per page', default: 10 })
+  queryListings(@Query() query: { 
+    country: string; 
+    city: string; 
+    noOfPeople: number; 
+    dateFrom: string; 
+    dateTo: string; 
+    page: number; 
+    limit: number; 
+  }) {
     return this.listingsService.queryListings(query);
   }
 
@@ -37,11 +47,15 @@ export class ListingsController {
   @ApiQuery({ name: 'country', type: 'string', required: true, description: 'Country to filter by' })
   @ApiQuery({ name: 'city', type: 'string', required: false, description: 'City to filter by' })
   @ApiQuery({ name: 'rating', type: 'number', required: true, description: 'Minimum rating to filter by' })
+  @ApiQuery({ name: 'page', type: 'number', required: false, description: 'Page number for pagination', default: 1 })
+  @ApiQuery({ name: 'limit', type: 'number', required: false, description: 'Number of listings per page', default: 10 })
   queryListingsByRating(
     @Query('country') country: string,
     @Query('city') city: string,
     @Query('rating') rating: number,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
   ) {
-    return this.listingsService.queryListingsByRating({ country, city, rating: +rating });
+    return this.listingsService.queryListingsByRating({ country, city, rating: +rating, page, limit });
   }
 }
